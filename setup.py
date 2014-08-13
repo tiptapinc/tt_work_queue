@@ -11,7 +11,7 @@ setup(
     ),
     version=open('VERSION').read().strip(),
     author='TipTap',
-    install_requires=['tornado', 'beanstalkt', 'PyYAML'],
+    install_requires=['tornado', 'beanstalkt==0.6.0', 'PyYAML'],
     package_dir={'tt_work_queue': 'src'},
     packages=['tt_work_queue']
 )
