@@ -1,3 +1,6 @@
+## v0.0.3:
+* export beanstalkt exceptions
+
 ## v0.0.2:
 * require beanstalkt version 0.6.0
 
