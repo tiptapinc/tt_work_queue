@@ -5,6 +5,10 @@ Copyright (c) 2014 tiptap. All rights reserved.
 
 """
 import beanstalkt
+import statsd
+import time
+import tornado.ioloop
+import tt_utils
 
 import logging
 log = logging.getLogger(__name__)
@@ -59,3 +63,56 @@ class TTWorkQueue(beanstalkt.Client):
             self.ready = ready
             if self.on_status_change:
                 self.on_status_change(self.ready)
+
+
+class BaseHandler(object):
+    """
+    base class for a consumer/producer of a TTWorkQueue.
+
+    """
+    STATSD = statsd.StatsClient('localhost', 8125)
+
+    def __init__(self, queueName):
+        self.queueName = queueName
+
+        ports = tt_utils.load_config("/opt/tiptap/configs/ports.yml")
+        host = "localhost"
+        port = ports['servicePorts']['beanstalkd']
+
+        self.queue = TTWorkQueue(host=host, port=port)
+        self.queue.initialize(
+            self.queueName,
+            on_reconnect=self._on_reconnect
+        )
+
+        self.consuming = False
+
+    def _on_reconnect(self, *args):
+        log.info("reconnected to \'%s\' beanstalkd tube" % self.queueName)
+        if self.consuming:
+            self.queue.reserve(callback=self._process_queue_job)
+
+    def _consume(self):
+        self.consuming = True
+        self.queue.reserve(callback=self._process_queue_job)
+
+    def _reconsume(self, reconsumeTime):
+        tornado.ioloop.IOLoop.instance().add_timeout(
+            reconsumeTime,
+            self._consume
+        )
+
+        log.info(
+            "queue %s reconsuming at %s" %
+            (
+                self.queueName,
+                time.strftime("%H:%M:%S", time.gmtime(reconsumeTime))
+            )
+        )
+
+    def put(self, jsonJob, **kwargs):
+        self.queue.put(jsonJob, callback=self._put_callback, **kwargs)
+
+    def _put_callback(self, resp):
+        if isinstance(resp, Exception):
+            log.warning("queue error: %s" % str(resp))

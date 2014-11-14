@@ -1,3 +1,6 @@
+# v0.0.4:
+* added BaseHandler class
+
 ## v0.0.3:
 * export beanstalkt exceptions
 
