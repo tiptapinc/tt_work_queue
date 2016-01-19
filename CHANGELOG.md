@@ -1,3 +1,6 @@
+# v0.0.5
+* removed "reconsuming" log message
+
 # v0.0.4:
 * added BaseHandler class
 

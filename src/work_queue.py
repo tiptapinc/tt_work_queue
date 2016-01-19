@@ -6,7 +6,6 @@ Copyright (c) 2014 tiptap. All rights reserved.
 """
 import beanstalkt
 import statsd
-import time
 import tornado.ioloop
 import tt_utils
 
@@ -100,14 +99,6 @@ class BaseHandler(object):
         tornado.ioloop.IOLoop.instance().add_timeout(
             reconsumeTime,
             self._consume
-        )
-
-        log.info(
-            "queue %s reconsuming at %s" %
-            (
-                self.queueName,
-                time.strftime("%H:%M:%S", time.gmtime(reconsumeTime))
-            )
         )
 
     def put(self, jsonJob, **kwargs):
