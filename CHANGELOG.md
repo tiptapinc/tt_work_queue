@@ -1,3 +1,13 @@
+# v0.0.8
+* leave beanstalkt.TimeOut handling to PollHandler
+  child classes 
+
+# v0.0.7
+* added PollHandler to __init__.py
+
+# v0.0.6
+* added PollHandler class
+
 # v0.0.5
 * removed "reconsuming" log message
 

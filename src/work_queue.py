@@ -107,3 +107,23 @@ class BaseHandler(object):
     def _put_callback(self, resp):
         if isinstance(resp, Exception):
             log.warning("queue error: %s" % str(resp))
+
+
+class PollHandler(BaseHandler):
+    """
+    handler that polls queue instead of blocking on reserve.
+
+    _process_queue_job method must handle a beanstalkt.TimedOut
+    exception by reconsuming after some interval
+
+    """
+    STATSD = statsd.StatsClient('localhost', 8125)
+
+    def _on_reconnect(self, *args):
+        log.info("reconnected to \'%s\' beanstalkd tube" % self.queueName)
+        if self.consuming:
+            self.queue.reserve(timeout=0, callback=self._process_queue_job)
+
+    def _consume(self):
+        self.consuming = True
+        self.queue.reserve(timeout=0, callback=self._process_queue_job)
