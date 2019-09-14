@@ -1,3 +1,6 @@
+# v0.0.10
+* added support for python 3
+
 # v0.0.9
 * add global PROCESSING flag for PollHandler
 

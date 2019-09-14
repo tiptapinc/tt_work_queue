@@ -1,6 +1,6 @@
-from work_queue import TTWorkQueue
-from work_queue import BaseHandler
-from work_queue import PollHandler
+from .work_queue import TTWorkQueue
+from .work_queue import BaseHandler
+from .work_queue import PollHandler
 
 from beanstalkt import UnexpectedResponse
 from beanstalkt import CommandFailed
