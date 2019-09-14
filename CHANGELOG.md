@@ -1,3 +1,6 @@
+# v0.0.10
+* added support for python 3
+
 # v0.0.8
 * leave beanstalkt.TimeOut handling to PollHandler
   child classes 
