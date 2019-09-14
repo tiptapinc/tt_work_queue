@@ -1,3 +1,6 @@
+# v0.0.9
+* add global PROCESSING flag for PollHandler
+
 # v0.0.8
 * leave beanstalkt.TimeOut handling to PollHandler
   child classes 

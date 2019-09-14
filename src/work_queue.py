@@ -109,6 +109,9 @@ class BaseHandler(object):
             log.warning("queue error: %s" % str(resp))
 
 
+PROCESSING = False
+
+
 class PollHandler(BaseHandler):
     """
     handler that polls queue instead of blocking on reserve.
@@ -116,14 +119,29 @@ class PollHandler(BaseHandler):
     _process_queue_job method must handle a beanstalkt.TimedOut
     exception by reconsuming after some interval
 
+    there can be multiple handlers in a single python process but
+    there should only be on reserved job / process at any time, so
+    this handler uses a global 'processing' flag
+
     """
     STATSD = statsd.StatsClient('localhost', 8125)
 
     def _on_reconnect(self, *args):
         log.info("reconnected to \'%s\' beanstalkd tube" % self.queueName)
-        if self.consuming:
+        if self.consuming and not PROCESSING:
             self.queue.reserve(timeout=0, callback=self._process_queue_job)
 
     def _consume(self):
         self.consuming = True
-        self.queue.reserve(timeout=0, callback=self._process_queue_job)
+        if not PROCESSING:
+            self.queue.reserve(timeout=0, callback=self._process_queue_job)
+
+    def _processing(self):
+        global PROCESSING
+
+        PROCESSING = True
+
+    def _not_processing(self):
+        global PROCESSING
+
+        PROCESSING = False
