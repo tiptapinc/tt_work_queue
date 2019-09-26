@@ -1,3 +1,6 @@
+# v0.0.11
+* lock beanstalkt version at 0.6.
+
 # v0.0.10
 * added support for python 3
 
