@@ -16,6 +16,5 @@ setup(
         'PyYAML',
         'beanstalkt==0.6.0'
     ],
-    package_dir={'tt_work_queue': 'src'},
     packages=['tt_work_queue']
 )
