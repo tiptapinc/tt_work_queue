@@ -12,6 +12,7 @@ import tt_utils
 import logging
 log = logging.getLogger(__name__)
 
+MM_DIR = os.getenv("MM_DIR", "/opt/tiptap")
 QUEUE_HOST = os.getenv("QUEUE_HOST", "localhost")
 
 
@@ -74,7 +75,7 @@ class BaseHandler(object):
     def __init__(self, queueName):
         self.queueName = queueName
 
-        ports = tt_utils.load_config("/opt/tiptap/configs/ports.yml")
+        ports = tt_utils.load_config(MM_DIR + "/configs/ports.yml")
         host = QUEUE_HOST
         port = ports['servicePorts']['beanstalkd']
 
