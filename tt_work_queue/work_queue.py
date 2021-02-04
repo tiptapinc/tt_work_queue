@@ -5,12 +5,15 @@ Copyright (c) 2014 tiptap. All rights reserved.
 
 """
 import beanstalkt
-import statsd
+import os
 import tornado.ioloop
 import tt_utils
 
 import logging
 log = logging.getLogger(__name__)
+
+MM_DIR = os.getenv("MM_DIR", "/opt/tiptap")
+QUEUE_HOST = os.getenv("QUEUE_HOST", "localhost")
 
 
 class TTWorkQueue(beanstalkt.Client):
@@ -69,13 +72,11 @@ class BaseHandler(object):
     base class for a consumer/producer of a TTWorkQueue.
 
     """
-    STATSD = statsd.StatsClient('localhost', 8125)
-
     def __init__(self, queueName):
         self.queueName = queueName
 
-        ports = tt_utils.load_config("/opt/tiptap/configs/ports.yml")
-        host = "localhost"
+        ports = tt_utils.load_config(MM_DIR + "/configs/ports.yml")
+        host = QUEUE_HOST
         port = ports['servicePorts']['beanstalkd']
 
         self.queue = TTWorkQueue(host=host, port=port)
@@ -124,8 +125,6 @@ class PollHandler(BaseHandler):
     this handler uses a global 'processing' flag
 
     """
-    STATSD = statsd.StatsClient('localhost', 8125)
-
     def _on_reconnect(self, *args):
         log.info("reconnected to \'%s\' beanstalkd tube" % self.queueName)
         if self.consuming and not PROCESSING:

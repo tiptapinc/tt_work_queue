@@ -1,3 +1,8 @@
+# v0.0.12
+* remove unused statsd reference
+* get QUEUE_HOST from environment variable if possible
+* get MM_DIR from environment variable if possible
+
 # v0.0.11
 * lock beanstalkt version at 0.6.
 
